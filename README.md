@@ -115,7 +115,7 @@ Note that changing a variable inside `try` and reading it afterwards is somewhat
 
 ## `saneobj` - Minimalistic Type-Safe Object System For gcc/clang
 
-Depends on `saneex`.
+Depends on `saneex` and Plan9 extensions (`-fplan9-extensions` in GCC).
 
 **Disclaimer:** the author does not promote OOP programming in C. `saneobj` exists for rare cases when C is perfectly fine but needs a bit more flexibility with certain tasks.
 
@@ -123,17 +123,21 @@ Depends on `saneex`.
 
 - uses only C's own preprocessor, no external tools
 - on-heap, on-stack, global (`static`) and singleton objects
-- single-class inheritance, methods overrides in children (but not properties)
-- class properties (non-instant, shared), abstract classes and methods
+- single-class inheritance, method overrides in children (but not properties)
+- class properties (non-instance, shared), abstract classes and methods
 - zero-cost class-casting to a parent on compile-time
 - built-in class for take/release model (reference counters)
 - run-time type information (class hierarchy, names, memory sizes)
 - 450 lines of code without comments
-- thread-safe
+- thread-safe, `-O3` safe
 
 ### Examples
 
 See `saneobj-demo.c` for more.
+
+```
+gcc -Wall -Wextra -fplan9-extensions saneobj-demo.c saneobj.c saneex.c
+```
 
 #### Using
 
@@ -170,7 +174,7 @@ foo(asp(obj, Autoref));                 >------------------. [1]
 delobj(obj);  // returns !0, obj is deallocated  <---.     |
                                                      |     |
 void foo(Autoref *obj) {                     <-------+-----'
-  obj->vt->take(obj);                                    |
+  obj->vt->take(obj);                                |
   obj->refs;    // 2                                 |
   ...                                                |
   delobj(obj);  // returns 0, obj->refs == 1   >-----' [2]
